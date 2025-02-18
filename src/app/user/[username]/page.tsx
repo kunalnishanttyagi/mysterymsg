@@ -12,8 +12,8 @@ export interface userdatainterface{
   email:string,
   username:string,
   messages:message[],
-  isacceptingmessage:Boolean,
-  isverified:Boolean
+  isacceptingmsg:boolean,
+  isverified:boolean,
 }
 export default function UserProfile() {
   const [visible, setVisible] = useState(true);
@@ -51,6 +51,7 @@ export default function UserProfile() {
         }
 
         const data = await res.json();
+        // console.log("data from page", data);
         setUser(data);
       } catch (error) {
         console.error("Error fetching user:", error);

@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
 // import { env } from "process";
 import dotenv from "dotenv"
+
 type connectobject={
     isconnected?:number
 }
+
 
 const connection:connectobject={}
 

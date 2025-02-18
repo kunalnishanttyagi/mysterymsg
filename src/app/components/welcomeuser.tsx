@@ -1,9 +1,9 @@
 "use client";
 // import React from "react";
 import  Button  from "./ui/moving-border";
-import React, { cloneElement, useState } from "react";
+import React, { cloneElement, useEffect, useState } from "react";
 import { HoverEffect } from "./ui/card-hover-effect";
- 
+
 // import React from "react";
 import { BackgroundBeamsWithCollision } from ".././components/ui/background-beams-with-collision";
 import { babelIncludeRegexes } from "next/dist/build/webpack-config";
@@ -20,17 +20,75 @@ import { buttons } from "./ui/Buttons";
 interface UserProps {
     data: userdatainterface;
   }
+  interface user{
+    id:string;
+    username:string;
+    firstname:string;
+    lastname:string;
+    // allusers: User[];
+  }
+  interface allusers{
+    // allusers
+    type: user[];
+  }
 // export default function BackgroundBeamsWithCollisionDemo ({firstname,lastname}) {
     // const BackgroundBeamsWithCollisionDemo: React.FC<UserProps> = ({ data }) => {
-      
+
+    // here i will make a fetch request to get all users
+
+    
     const BackgroundLinesDemo: React.FC<UserProps> = ({ data }) => {
-      const [isOn, setIsOn] = useState(false);
-   const button = buttons.find((btn) => btn.name === "Shimmer");
+      console.log("dekho data aisa h", data);
+      const [allusers,setallusers]=useState<Array<user>>( [] ); 
+    // const [allusers,setallusers]=useState({});
+    const [isOn, setIsOn] = useState(false);
+    useEffect(()=>{
+      console.log(isOn);
+      console.log("originally ans is", data.isacceptingmsg)
+      if(data.isacceptingmsg) setIsOn(true);
+      console.log(isOn);
+      
+    },[])
+      
+    const [showmessage,setshowmessage]=useState(true);
+    const isEmpty = (obj:object) => Object.keys(obj).length === 0;
+     const getallusers=async()=> {
+      try {
+        const res = await fetch(`http://localhost:3000/api/allusers`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!res.ok) {
+          throw new Error("User not found");
+        }
+
+        const data = await res.json();
+        // const data=await response.json();
+        setallusers(data.users);
+        console.log(data);
+        return;
+        
+        // console.log("Server Response:",data);
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    }
+    
+    useEffect(() => {
+      if (showmessage && allusers.length === 0) {
+        getallusers();
+      }
+    }, [showmessage]); // Fetch when message visibility is toggled
+  
+    const handleclick = () => {
+      setshowmessage((prev) => !prev);
+    };
+      const button = buttons.find((btn) => btn.name === "Shimmer");
    
      if (!button) {
        return <p>Button not found</p>;
      }
-     const [showmessage,setshowmessage]=useState(true);
       return (
           <BackgroundLines className=" relative  -z-50 flex items-center justify-center w-full flex-col px-4">
             
@@ -49,7 +107,7 @@ interface UserProps {
                                 <div className=" flex gap-[500px]" >
                                   <div className=" text-[30px] mt-4  pl-[40px] " >What people say you!</div>
                                   {/* <b>Send Msg</b> */}
-                                  <button onClick={()=> setshowmessage(!showmessage)}>{cloneElement(button.component, {}, "Send Msg")}</button>
+                                  <div onClick={handleclick}>{cloneElement(button.component, {}, "Send Msg")}</div>
                                   
                                 </div>
         
@@ -57,10 +115,28 @@ interface UserProps {
                                 <HoverEffect items={projects} />
                               </div>
                                 </div>) : ((<div className=" mt-5 pl-4">
-                                <div className=" flex gap-[500px]" >
+                                <div className=" flex flex-col gap-[50px]" >
                                   {/* <div className=" text-[30px] mt-4  pl-[40px] " >What people say you!</div> */}
                                   {/* <b>Send Msg</b> */}
-                                  <button onClick={()=> setshowmessage(!showmessage)}>{cloneElement(button.component, {}, "Show Msg")}</button>
+                                  <div onClick={handleclick}>{cloneElement(button.component, {}, "Show Msg")}</div>
+
+                                  {/* now i will show all the users here */}
+
+                                  {
+                                    (allusers.length==0) ? (
+                                      <div> Loading..</div>
+                                    ) : ( 
+                                      <div className=" w-[1050px]  flex flex-wrap gap-[80px]">
+                                        {allusers.map((user) => (
+                                          <div key={user._id} className="w-auto text-lg font-semibold">
+                                            <div>{user.firstname} {user.lastname}</div>
+                                            <div>(@{user.username})</div>
+                                          </div>
+                                        ))}
+                                      </div>
+
+                                     )
+                                  }
                                   
                                 </div>
         
@@ -114,41 +190,41 @@ interface UserProps {
             "A multinational technology company that develops, manufactures, licenses, supports, and sells computer software, consumer electronics, personal computers, and related services.",
           link: "https://microsoft.com",
         },
-        {
-          title: "Stripe",
-          description:
-            "A technology company that builds economic infrastructure for the internet.",
-          link: "https://stripe.com",
-        },
-        {
-          title: "Netflix",
-          description:
-            "A streaming service that offers a wide variety of award-winning TV shows, movies, anime, documentaries, and more on thousands of internet-connected devices.",
-          link: "https://netflix.com",
-        },
-        {
-          title: "Google",
-          description:
-            "A multinational technology company that specializes in Internet-related services and products.",
-          link: "https://google.com",
-        },
-        {
-          title: "Meta",
-          description:
-            "A technology company that focuses on building products that advance Facebook's mission of bringing the world closer together.",
-          link: "https://meta.com",
-        },
-        {
-          title: "Amazon",
-          description:
-            "A multinational technology company focusing on e-commerce, cloud computing, digital streaming, and artificial intelligence.",
-          link: "https://amazon.com",
-        },
-        {
-          title: "Microsoft",
-          description:
-            "A multinational technology company that develops, manufactures, licenses, supports, and sells computer software, consumer electronics, personal computers, and related services.",
-          link: "https://microsoft.com",
-        },
+        // {
+        //   title: "Stripe",
+        //   description:
+        //     "A technology company that builds economic infrastructure for the internet.",
+        //   link: "https://stripe.com",
+        // },
+        // {
+        //   title: "Netflix",
+        //   description:
+        //     "A streaming service that offers a wide variety of award-winning TV shows, movies, anime, documentaries, and more on thousands of internet-connected devices.",
+        //   link: "https://netflix.com",
+        // },
+        // {
+        //   title: "Google",
+        //   description:
+        //     "A multinational technology company that specializes in Internet-related services and products.",
+        //   link: "https://google.com",
+        // },
+        // {
+        //   title: "Meta",
+        //   description:
+        //     "A technology company that focuses on building products that advance Facebook's mission of bringing the world closer together.",
+        //   link: "https://meta.com",
+        // },
+        // {
+        //   title: "Amazon",
+        //   description:
+        //     "A multinational technology company focusing on e-commerce, cloud computing, digital streaming, and artificial intelligence.",
+        //   link: "https://amazon.com",
+        // },
+        // {
+        //   title: "Microsoft",
+        //   description:
+        //     "A multinational technology company that develops, manufactures, licenses, supports, and sells computer software, consumer electronics, personal computers, and related services.",
+        //   link: "https://microsoft.com",
+        // },
       ];
       export default BackgroundLinesDemo;

@@ -6,8 +6,10 @@ interface username{
 }
 export async function GET(req: Request, { params }: { params: { username: string } }) {
   
-    const { username } =await params;
-
+    const { username } = params;
+    console.log("API Route Hit");
+console.log("Params:", params);
+console.log("Username:", username);
     await dbconnect();
     try{
         // 
