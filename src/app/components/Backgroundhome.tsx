@@ -6,9 +6,9 @@ import { AuroraBackground } from "../components/ui/aurora-background";
 import {buttons} from "../components/ui/Buttons"
 import Link from "next/link";
 export default function AuroraBackgroundDemo() {
-    const button = buttons.find((btn) => btn.name === "Shimmer");
+    const shimmer = buttons.find((btn) => btn.name === "Shimmer");
 
-  if (!button) {
+  if (!shimmer) {
     return <p>Button not found</p>;
   }
   return (
@@ -38,7 +38,7 @@ export default function AuroraBackgroundDemo() {
         Get started
         </button> */}
         <Link href="/signup" className="flex justify-center items-center">
-        {cloneElement(button.component, {}, "Get Started")}
+        {cloneElement(shimmer.component, {}, "Get Started")}
     </Link>
       </motion.div>
     </AuroraBackground>

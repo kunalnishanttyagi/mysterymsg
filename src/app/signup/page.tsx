@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { cn } from "../lib/util";
@@ -9,6 +9,7 @@ import {
   IconBrandGoogle,
   IconBrandOnlyfans,
 } from "@tabler/icons-react";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function signup({ className }: { className?: string }) {
   const port=process.env.PORT;
@@ -21,6 +22,9 @@ export default function signup({ className }: { className?: string }) {
   });const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setformdata({ ...formdata, [e.target.name]: e.target.value });
   };
+  const toasttosuccessfulsignup=()=>{
+    toast("Sign up Successful")
+  }
   
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -35,11 +39,14 @@ export default function signup({ className }: { className?: string }) {
   
       const data = await response.json();
       console.log("Server Response:", data,data.firstname);
+      if(data.success){
+        toasttosuccessfulsignup();
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   }
-  
+ 
   
 
  
@@ -49,7 +56,7 @@ export default function signup({ className }: { className?: string }) {
         Welcome to FelixN
       </h2>
       
-
+      <ToastContainer></ToastContainer>
       <form className="my-8" onSubmit={handleSubmit}>
         <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
           <LabelInputContainer>

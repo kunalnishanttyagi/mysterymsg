@@ -3,19 +3,22 @@
 // import { Schema } from "inspector/promises";
 import mongoose from "mongoose";
 import { Schema } from "mongoose";
+import Document from "mongoose";
 
-export interface message extends Document{
+export interface Message{
     content: string;
-    createdat: Date;
+    createdate: Date;
+    sender:string;
+    realsender:string;
 }
 
-export interface user extends Document{
+export interface User{
     firstname:string,
     lastname:string,
     username: string;
     password: string;
     email: string;
-    messages?: message[];
+    messages?: Message[];
     isacceptingmsg: boolean;
     isverified: boolean;
 }
@@ -24,19 +27,27 @@ export interface user extends Document{
 
 // now make schemas
 
-const messageschema : Schema<message> =new mongoose.Schema ({
+const messageschema : Schema<Message> =new mongoose.Schema ({
     content:{
         type: String,
         required: true,
     },
-    createdat:{
+    createdate:{
         type: Date,
         required: true,
         default: Date.now
+    },
+    sender:{
+        type:String,
+        required:true
+    },
+    realsender:{
+        type:String,
+        required:true,
     }
 })
 
-const userschema : Schema<user> =new mongoose.Schema ({
+const userschema : Schema<User> =new mongoose.Schema ({
     firstname:{
         type: String,
         required: true,
@@ -75,5 +86,5 @@ const userschema : Schema<user> =new mongoose.Schema ({
     }
 })
 
-const usermodel = (mongoose.models.user as mongoose.Model<user>) || (mongoose.model<user>("user",userschema));
+const usermodel = (mongoose.models.user as mongoose.Model<User>) || (mongoose.model<User>("user",userschema));
 export default usermodel;

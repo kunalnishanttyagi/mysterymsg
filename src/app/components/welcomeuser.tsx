@@ -3,7 +3,11 @@
 import  Button  from "./ui/moving-border";
 import React, { cloneElement, useEffect, useState } from "react";
 import { HoverEffect } from "./ui/card-hover-effect";
-
+import { ToastContainer, toast } from 'react-toastify';
+  
+import { Textarea } from "@/components/ui/textarea"
+// import {Shimmer} from "../components/ui/Buttons"
+import shimmer from "./Backgroundhome"
 // import React from "react";
 import { BackgroundBeamsWithCollision } from ".././components/ui/background-beams-with-collision";
 import { babelIncludeRegexes } from "next/dist/build/webpack-config";
@@ -13,6 +17,7 @@ import { userdatainterface } from "../user/[username]/page";
       import ToggleSwitch from "./ui/toggler";
 import Link from "next/link";
 import { buttons } from "./ui/Buttons";
+// import { toast } from "sonner";
       // interface ToggleSwitchProps {
       //   isOn: boolean;
       //   onToggle: () => void;
@@ -21,7 +26,7 @@ interface UserProps {
     data: userdatainterface;
   }
   interface user{
-    id:string;
+    _id:string;
     username:string;
     firstname:string;
     lastname:string;
@@ -40,6 +45,8 @@ interface UserProps {
     const BackgroundLinesDemo: React.FC<UserProps> = ({ data }) => {
       console.log("dekho data aisa h", data);
       const [allusers,setallusers]=useState<Array<user>>( [] ); 
+      const toastformessagesentsuccessfully = () => toast("Msg Sent!");
+      const toastformessagesentunsuccessfully = () => toast("Msg not Sent!");
     // const [allusers,setallusers]=useState({});
     const [isOn, setIsOn] = useState(false);
     useEffect(()=>{
@@ -51,6 +58,8 @@ interface UserProps {
     },[])
       
     const [showmessage,setshowmessage]=useState(true);
+    const [text,settext]=useState("");
+    const [receiver,setreceiver]=useState("");
     const isEmpty = (obj:object) => Object.keys(obj).length === 0;
      const getallusers=async()=> {
       try {
@@ -74,6 +83,8 @@ interface UserProps {
         console.error("Error submitting form:", error);
       }
     }
+    const [currentuser,setcurrentuser]=useState("");
+    const shimmer = buttons.find((btn) => btn.name === "Shimmer");
     
     useEffect(() => {
       if (showmessage && allusers.length === 0) {
@@ -84,18 +95,119 @@ interface UserProps {
     const handleclick = () => {
       setshowmessage((prev) => !prev);
     };
+    const sendmessagebyidentity=async()=>{
+      // handle message sending here
+      console.log(text);
+      console.log(receiver);
+      const useme=data.username;
+      try{
+        console.log("trying to make request at backend for sending message")
+        const response = await fetch("http://localhost:3000/api/sendmessage", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({username:receiver,msg:text,sender:(currentuser),realsender:(useme)}),
+        });
+    
+        const data = await response.json();
+        console.log(currentuser)
+        console.log("Server Response:", data.success);
+        if(data.success){
+          toastformessagesentsuccessfully(); 
+        }
+        else{
+          toastformessagesentunsuccessfully();
+          
+        }
+      }
+      catch(err){
+        console.log("could not make a request to send message to backend")
+
+      }
+    }
+    const sendmessageanonymous=async()=>{
+      // handle message sending here
+      const useme=data.username;
+      console.log(text);
+      console.log(receiver);
+      try{
+        console.log("trying to make request at backend for sending message")
+        const response = await fetch("http://localhost:3000/api/sendmessage", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({username:receiver,msg:text,sender:("Anonymous"),realsender:(useme)}),
+        });
+    
+        const data = await response.json();
+        console.log(currentuser)
+        console.log("Server Response:", data.success);
+        if(data.success){
+          toastformessagesentsuccessfully(); 
+        }
+        else{
+          toastformessagesentunsuccessfully();
+          
+        }
+      }
+      catch(err){
+        console.log("could not make a request to send message to backend")
+
+      }
+    }
+    const [hidebg,sethidebg]=useState(false);
       const button = buttons.find((btn) => btn.name === "Shimmer");
-   
-     if (!button) {
+    const hideeverything= (username:string)=>{
+      sethidebg(!hidebg);
+      setreceiver(username);
+      
+
+
+      
+    }
+    const handlenewclick=()=>{
+      sethidebg(!hidebg);
+      setshowmessage((prev) => !prev);
+
+
+    }
+    useEffect(()=>{
+      setcurrentuser(data.firstname+" "+data.lastname);
+    },[])
+     const [messages,setmessages]=useState([]);
+      useEffect(()=>{
+        setmessages(data.messages || []);
+        console.log(messages); 
+      },[])
+      
+     if (!shimmer) {
        return <p>Button not found</p>;
      }
       return (
-          <BackgroundLines className=" relative  -z-50 flex items-center justify-center w-full flex-col px-4">
+          <BackgroundLines className="relative flex  -z-50 items-center justify-center w-full flex-col px-4">
             
             <div className="absolute text-[40px] left-[110px] top-[48px]" >{data.firstname+" "+ data.lastname} </div>
-            <div className=" z-50 flex justify-center items-center h-full w-full " >
+            {
+              hidebg ? (
+                <div className="z-50 flex justify-center items-center h-full w-full" >
+                  <div className=" mt-[200px] w-[900px] h-full bg-transparent" >
+                    
+                  <div className=" flex justify-end mb-[20px]"  onClick={handlenewclick}>{cloneElement(button.component, {}, "Show Msg")}</div>
+             
+                    
+                    <Textarea onChange={(e) => settext(e.target.value)}  className="h-[300px]"></Textarea>
+                    <div className=" flex justify-around mt-[30px] " >
+                      <div onClick={sendmessagebyidentity}>{cloneElement(shimmer.component, {}, "Send")}</div>
+                      <div onClick={sendmessageanonymous}>{cloneElement(shimmer.component, {}, "Send Anonymous")}</div>
+                      
+          <ToastContainer></ToastContainer> 
+                    </div>
+                  </div>
+                </div>
+                // here show the text regiion
+              ):(
+                // show everything
+                <div className=" z-50 flex justify-center items-center h-full w-full " >
 
-                <div className=" mt-[200px] pl-[100px]  h-auto w-[1200px] flex " > 
+                <div className=" mt-[180px] pl-[100px]  h-auto w-[1200px] flex " > 
                         
                       <div className= "flex flex-col">
                       <ToggleSwitch  isOn={isOn} onToggle={() => setIsOn(!isOn)} />
@@ -107,18 +219,19 @@ interface UserProps {
                                 <div className=" flex gap-[500px]" >
                                   <div className=" text-[30px] mt-4  pl-[40px] " >What people say you!</div>
                                   {/* <b>Send Msg</b> */}
-                                  <div onClick={handleclick}>{cloneElement(button.component, {}, "Send Msg")}</div>
+                                  <div onClick={handleclick}>{cloneElement(shimmer.component, {}, "Send Msg")}</div>
                                   
                                 </div>
         
                               <div className="max-w-5xl mx-auto px-8">
-                                <HoverEffect items={projects} />
+                                <HoverEffect items={messages} />
                               </div>
-                                </div>) : ((<div className=" mt-5 pl-4">
+                                </div>) : 
+                                ((<div className=" mt-5 pl-4">
                                 <div className=" flex flex-col gap-[50px]" >
                                   {/* <div className=" text-[30px] mt-4  pl-[40px] " >What people say you!</div> */}
                                   {/* <b>Send Msg</b> */}
-                                  <div onClick={handleclick}>{cloneElement(button.component, {}, "Show Msg")}</div>
+                                  <div onClick={handleclick} className=" flex justify-end mr-[125px] "  >{cloneElement(button.component, {}, "Show Msg")}</div>
 
                                   {/* now i will show all the users here */}
 
@@ -127,8 +240,9 @@ interface UserProps {
                                       <div> Loading..</div>
                                     ) : ( 
                                       <div className=" w-[1050px]  flex flex-wrap gap-[80px]">
+                                        {/* use extandable cards here */}
                                         {allusers.map((user) => (
-                                          <div key={user._id} className="w-auto text-lg font-semibold">
+                                          <div onClick={()=>hideeverything(user.username)} key={user._id} className="w-auto text-lg font-semibold">
                                             <div>{user.firstname} {user.lastname}</div>
                                             <div>(@{user.username})</div>
                                           </div>
@@ -149,6 +263,9 @@ interface UserProps {
                       </div>
                 </div>
             </div>
+              )
+            }
+            
           </BackgroundLines>
         );
       }

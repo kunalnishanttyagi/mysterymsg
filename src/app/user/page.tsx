@@ -1,11 +1,15 @@
-import React from 'react'
+"use client"
+import React from 'react';
 
-const page = () => {
-  return (
-    <div>
-      This is user page
-    </div>
-  )
-}
+  import { ToastContainer, toast } from 'react-toastify';
+  
+  export default function user(){
+    const notify = () => toast("Wow so easy!");
 
-export default page
+    return (
+      <div>
+        <button onClick={notify}>Notify!</button>
+        <ToastContainer />
+      </div>
+    );
+  }

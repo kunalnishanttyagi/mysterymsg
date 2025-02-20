@@ -62,10 +62,10 @@ export async function POST(req:Request,res:Response) {
           }
           else{
             console.log("User formed saving not done");
-            return NextResponse.json({success:true, message: "User signed up unsuccessfull!" }, { status: 201 });
+            return NextResponse.json({success:false, message: "User signed up unsuccessfull!" }, { status: 201 });
     
           }
-        return NextResponse.json({success:true, message: "User signed up successfully!" }, { status: 201 });
+        // return NextResponse.json({success:true, message: "User signed up successfully!" }, { status: 201 });
       }
       // then create by updating content if is verified is false;
     }
@@ -78,19 +78,19 @@ export async function POST(req:Request,res:Response) {
           const result=await newuser.save();
           if(result){
             console.log("User formed just saving done");
-            return NextResponse.json({success:true, message: "User signed up successfully!" }, { status: 201 });
+            // return NextResponse.json({success:true, message: "User signed up successfully!" }, { status: 201 });
     
           }
           else{
             console.log("User formed saving not done");
-            return NextResponse.json({success:true, message: "User signed up unsuccessfull!" }, { status: 201 });
+            // return NextResponse.json({success:true, message: "User signed up unsuccessfull!" }, { status: 201 });
     
           }
         
       // }
       // console.log("funciton m nhi gya")
       
-      // return NextResponse.json({success:true, message: "User signed up successfully!" }, { status: 201 });
+      return NextResponse.json({success:true, message: "User signed up successfully!" }, { status: 201 });
     
     }
   } catch (error) {
