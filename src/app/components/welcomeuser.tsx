@@ -2,6 +2,7 @@
 // import React from "react";
 import  Button  from "./ui/moving-border";
 import React, { cloneElement, useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import { HoverEffect } from "./ui/card-hover-effect";
 import { ToastContainer, toast } from 'react-toastify';
   
@@ -17,6 +18,7 @@ import { userdatainterface } from "../user/[username]/page";
       import ToggleSwitch from "./ui/toggler";
 import Link from "next/link";
 import { buttons } from "./ui/Buttons";
+import router from "next/router";
 // import { toast } from "sonner";
       // interface ToggleSwitchProps {
       //   isOn: boolean;
@@ -58,7 +60,7 @@ interface UserProps {
     },[])
       
     const [showmessage,setshowmessage]=useState(true);
-    const [text,settext]=useState("");
+    
     const [receiver,setreceiver]=useState("");
     const isEmpty = (obj:object) => Object.keys(obj).length === 0;
      const getallusers=async()=> {
@@ -95,64 +97,7 @@ interface UserProps {
     const handleclick = () => {
       setshowmessage((prev) => !prev);
     };
-    const sendmessagebyidentity=async()=>{
-      // handle message sending here
-      console.log(text);
-      console.log(receiver);
-      const useme=data.username;
-      try{
-        console.log("trying to make request at backend for sending message")
-        const response = await fetch("http://localhost:3000/api/sendmessage", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({username:receiver,msg:text,sender:(currentuser),realsender:(useme)}),
-        });
     
-        const data = await response.json();
-        console.log(currentuser)
-        console.log("Server Response:", data.success);
-        if(data.success){
-          toastformessagesentsuccessfully(); 
-        }
-        else{
-          toastformessagesentunsuccessfully();
-          
-        }
-      }
-      catch(err){
-        console.log("could not make a request to send message to backend")
-
-      }
-    }
-    const sendmessageanonymous=async()=>{
-      // handle message sending here
-      const useme=data.username;
-      console.log(text);
-      console.log(receiver);
-      try{
-        console.log("trying to make request at backend for sending message")
-        const response = await fetch("http://localhost:3000/api/sendmessage", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({username:receiver,msg:text,sender:("Anonymous"),realsender:(useme)}),
-        });
-    
-        const data = await response.json();
-        console.log(currentuser)
-        console.log("Server Response:", data.success);
-        if(data.success){
-          toastformessagesentsuccessfully(); 
-        }
-        else{
-          toastformessagesentunsuccessfully();
-          
-        }
-      }
-      catch(err){
-        console.log("could not make a request to send message to backend")
-
-      }
-    }
     const [hidebg,sethidebg]=useState(false);
       const button = buttons.find((btn) => btn.name === "Shimmer");
     const hideeverything= (username:string)=>{
@@ -169,6 +114,15 @@ interface UserProps {
 
 
     }
+  //   const setreceiverfunc = (username) => {
+  //     setreceiver(username);
+  // };
+
+  // useEffect(() => {
+  //     if (receiver) {
+  //         router.push(`/user/${data.username}/sendmessage?receiver=${receiver}&sender=${data.username}`);
+  //     }
+  // }, [receiver]); // Runs when `receiver` updates
     useEffect(()=>{
       setcurrentuser(data.firstname+" "+data.lastname);
     },[])
@@ -181,30 +135,14 @@ interface UserProps {
      if (!shimmer) {
        return <p>Button not found</p>;
      }
+     const datatosendtomessagesender={
+      sender:currentuser,
+      receiver:receiver,
+     }
       return (
           <BackgroundLines className="relative flex  -z-50 items-center justify-center w-full flex-col px-4">
             
             <div className="absolute text-[40px] left-[110px] top-[48px]" >{data.firstname+" "+ data.lastname} </div>
-            {
-              hidebg ? (
-                <div className="z-50 flex justify-center items-center h-full w-full" >
-                  <div className=" mt-[200px] w-[900px] h-full bg-transparent" >
-                    
-                  <div className=" flex justify-end mb-[20px]"  onClick={handlenewclick}>{cloneElement(button.component, {}, "Show Msg")}</div>
-             
-                    
-                    <Textarea onChange={(e) => settext(e.target.value)}  className="h-[300px]"></Textarea>
-                    <div className=" flex justify-around mt-[30px] " >
-                      <div onClick={sendmessagebyidentity}>{cloneElement(shimmer.component, {}, "Send")}</div>
-                      <div onClick={sendmessageanonymous}>{cloneElement(shimmer.component, {}, "Send Anonymous")}</div>
-                      
-          <ToastContainer></ToastContainer> 
-                    </div>
-                  </div>
-                </div>
-                // here show the text regiion
-              ):(
-                // show everything
                 <div className=" z-50 flex justify-center items-center h-full w-full " >
 
                 <div className=" mt-[180px] pl-[100px]  h-auto w-[1200px] flex " > 
@@ -242,10 +180,11 @@ interface UserProps {
                                       <div className=" w-[1050px]  flex flex-wrap gap-[80px]">
                                         {/* use extandable cards here */}
                                         {allusers.map((user) => (
-                                          <div onClick={()=>hideeverything(user.username)} key={user._id} className="w-auto text-lg font-semibold">
+                                          <Link href={`/user/${data.username}/sendmessage?reciever=${user.username}&sender=${data.username}`}
+     key={user._id} className="w-auto text-lg font-semibold">
                                             <div>{user.firstname} {user.lastname}</div>
                                             <div>(@{user.username})</div>
-                                          </div>
+                                          </Link>
                                         ))}
                                       </div>
 
@@ -263,8 +202,7 @@ interface UserProps {
                       </div>
                 </div>
             </div>
-              )
-            }
+              
             
           </BackgroundLines>
         );
@@ -344,4 +282,4 @@ interface UserProps {
         //   link: "https://microsoft.com",
         // },
       ];
-      export default BackgroundLinesDemo;
+      export default BackgroundLinesDemo;           
