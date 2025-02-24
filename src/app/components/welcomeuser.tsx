@@ -4,6 +4,7 @@ import  Button  from "./ui/moving-border";
 import React, { cloneElement, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { HoverEffect } from "./ui/card-hover-effect";
+import { SignedIn,SignInButton,UserButton, SignedOut } from "@clerk/nextjs";
 import { ToastContainer, toast } from 'react-toastify';
   
 import { Textarea } from "@/components/ui/textarea"
@@ -12,7 +13,7 @@ import shimmer from "./Backgroundhome"
 // import React from "react";
 import { BackgroundBeamsWithCollision } from ".././components/ui/background-beams-with-collision";
 import { babelIncludeRegexes } from "next/dist/build/webpack-config";
-import { userdatainterface } from "../user/[username]/page";
+import { userdatainterface } from "../user/page";
 // import React from "react";
       import { BackgroundLines } from "../components/ui/background-lines";
       import ToggleSwitch from "./ui/toggler";
@@ -44,7 +45,7 @@ interface UserProps {
     // here i will make a fetch request to get all users
 
     
-    const BackgroundLinesDemo: React.FC<UserProps> = ({ data }) => {
+    const  BackgroundLinesDemo: React.FC<UserProps> = ({ data }) => {
       console.log("dekho data aisa h", data);
       const [allusers,setallusers]=useState<Array<user>>( [] ); 
       const toastformessagesentsuccessfully = () => toast("Msg Sent!");
@@ -140,6 +141,7 @@ interface UserProps {
       receiver:receiver,
      }
       return (
+        
           <BackgroundLines className="relative flex  -z-50 items-center justify-center w-full flex-col px-4">
             
             <div className="absolute text-[40px] left-[110px] top-[48px]" >{data.firstname+" "+ data.lastname} </div>
@@ -162,7 +164,7 @@ interface UserProps {
                                 </div>
         
                               <div className="max-w-5xl mx-auto px-8">
-                                <HoverEffect items={messages} />
+                                <HoverEffect items={messages} username={data.username} />
                               </div>
                                 </div>) : 
                                 ((<div className=" mt-5 pl-4">
@@ -180,7 +182,7 @@ interface UserProps {
                                       <div className=" w-[1050px]  flex flex-wrap gap-[80px]">
                                         {/* use extandable cards here */}
                                         {allusers.map((user) => (
-                                          <Link href={`/user/${data.username}/sendmessage?reciever=${user.username}&sender=${data.username}`}
+                                          <Link href={`/user/sendmessage?reciever=${user.username}&sender=${data.username}`}
      key={user._id} className="w-auto text-lg font-semibold">
                                             <div>{user.firstname} {user.lastname}</div>
                                             <div>(@{user.username})</div>

@@ -6,9 +6,14 @@ import { Message } from "@/Model/User";
 export async function POST(req: Request) { 
 
     await dbconnect();
-    // const data=await req.json();
+    const token = req.headers.get("Authorization")?.split(" ")[1]; // Extract token
+    
+    const data=await req.json();
+    if (!token) {
+        console.log("token hi nhi h");
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     try{
-        const data=await req.json();
         console.log(data);
         // console.log(data.username,data.msg);
         const username=data.username;
@@ -35,6 +40,7 @@ export async function POST(req: Request) {
         return NextResponse.json({success:true});
     }
     catch(err){
+        console.log(err);
         return NextResponse.json({success:false,msg:err});
     }
 

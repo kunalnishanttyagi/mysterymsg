@@ -1,22 +1,28 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { HoveredLink, Menu, MenuItem, ProductItem } from "./ui/navbar-menu";
 import { cn } from "../lib/util";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-export function NavbarDemo() {
-  return (
-    <div className="relative w-full flex items-center justify-center">
-      <Navbar className="top-2" />
-      <p className="text-black dark:text-white">
-        The Navbar will show on top of the page
-      </p>
-    </div>
-  );
-}
 
 export default function Navbar({ className }: { className?: string }) {
+  const [isAuthenticated,setIsAuthenticated]=useState(false);
   const [active, setActive] = useState<string | null>(null);
+  const token=localStorage.getItem("token");
+  const router=useRouter();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if(token)
+    setIsAuthenticated(true);
+    else setIsAuthenticated(false);
+    // Convert token existence to boolean
+  }, []);
+  const handlesignout=(()=>{
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    router.push('/');
+  })
   return (
     <div
       className={cn("fixed top-10 inset-x-0 max-w-2xl mx-auto z-50", className)}
@@ -25,81 +31,45 @@ export default function Navbar({ className }: { className?: string }) {
       <Link href="/">
   <MenuItem setActive={setActive} active={active} item="Home">
     <div className="flex flex-col space-y-4 text-sm">
-      <HoveredLink href="/web-dev">FelixN</HoveredLink>
-      <HoveredLink href="/interface-design">Interface Design</HoveredLink>
-      <HoveredLink href="/seo">Search Engine Optimization</HoveredLink>
-      <HoveredLink href="/branding">Branding</HoveredLink>
     </div>
   </MenuItem>
 </Link>
       <Link href="/user">
   <MenuItem setActive={setActive} active={active} item="Services">
     <div className="flex flex-col space-y-4 text-sm">
-      <HoveredLink href="/web-dev">ABOUT</HoveredLink>
-      <HoveredLink href="/interface-design">Interface Design</HoveredLink>
-      <HoveredLink href="/seo">Search Engine Optimization</HoveredLink>
-      <HoveredLink href="/branding">Branding</HoveredLink>
     </div>
   </MenuItem>
 </Link>
-        <Link href="/signin" > <MenuItem setActive={setActive} active={active} item="Sign in">
+{/* <SignedOut> */}
+        
+        {
+          isAuthenticated ? (<Link href="/" onClick={handlesignout} > <MenuItem setActive={setActive} active={active} item="Sign out">
+            <div className="  text-sm grid grid-cols-2 gap-10 p-4">
+              
+            </div>
+          </MenuItem>
+          </Link>):(<div className=" flex gap-5" >
+            <Link href="/signin" > <MenuItem setActive={setActive} active={active} item="Sign in">
           <div className="  text-sm grid grid-cols-2 gap-10 p-4">
-            <ProductItem
-              title="Algochurn"
-              href="https://algochurn.com"
-              src="https://assets.aceternity.com/demos/algochurn.webp"
-              description="Prepare for tech interviews like never before."
-            />
-            <ProductItem
-              title="Tailwind Master Kit"
-              href="https://tailwindmasterkit.com"
-              src="https://assets.aceternity.com/demos/tailwindmasterkit.webp"
-              description="Production ready Tailwind css components for your next project"
-            />
-            <ProductItem
-              title="Moonbeam"
-              href="https://gomoonbeam.com"
-              src="https://assets.aceternity.com/demos/Screenshot+2024-02-21+at+11.51.31%E2%80%AFPM.png"
-              description="Never write from scratch again. Go from idea to blog in minutes."
-            />
-            <ProductItem
-              title="Rogue"
-              href="https://userogue.com"
-              src="https://assets.aceternity.com/demos/Screenshot+2024-02-21+at+11.47.07%E2%80%AFPM.png"
-              description="Respond to government RFPs, RFIs and RFQs 10x faster using AI"
-            />
+            
           </div>
         </MenuItem>
         </Link>
+        {/* </SignedOut> */}
+        {/* <SignedIn> */}
         <Link href="/signup" > <MenuItem setActive={setActive} active={active} item="Sign Up">
           <div className="  text-sm grid grid-cols-2 gap-10 p-4">
-            <ProductItem
-              title="Algochurn"
-              href="https://algochurn.com"
-              src="https://assets.aceternity.com/demos/algochurn.webp"
-              description="Prepare for tech interviews like never before."
-            />
-            <ProductItem
-              title="Tailwind Master Kit"
-              href="https://tailwindmasterkit.com"
-              src="https://assets.aceternity.com/demos/tailwindmasterkit.webp"
-              description="Production ready Tailwind css components for your next project"
-            />
-            <ProductItem
-              title="Moonbeam"
-              href="https://gomoonbeam.com"
-              src="https://assets.aceternity.com/demos/Screenshot+2024-02-21+at+11.51.31%E2%80%AFPM.png"
-              description="Never write from scratch again. Go from idea to blog in minutes."
-            />
-            <ProductItem
-              title="Rogue"
-              href="https://userogue.com"
-              src="https://assets.aceternity.com/demos/Screenshot+2024-02-21+at+11.47.07%E2%80%AFPM.png"
-              description="Respond to government RFPs, RFIs and RFQs 10x faster using AI"
-            />
+            
           </div>
         </MenuItem>
         </Link>
+            </div>)
+        }
+
+
+
+        {/* <UserButton></UserButton>
+        </SignedIn> */}
       </Menu>
     </div>
   );

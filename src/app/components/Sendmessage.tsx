@@ -5,12 +5,14 @@ import { ToastContainer } from 'react-toastify'
 const Sendmessage = ({ data }) => {
     
 
+
+
   return (
     <div>
 <div className="z-50 flex justify-center items-center h-full w-full" >
                   <div className=" mt-[200px] w-[900px] h-full bg-transparent" >
                     
-                  <div className=" flex justify-end mb-[20px]"  onClick={handlenewclick}>{cloneElement(button.component, {}, "Show Msg")}</div>
+                  <Link href="/user" className=" flex justify-end mb-[20px]">{cloneElement(button.component, {}, "Show Msg")}</Link>
              
                     
                     <Textarea onChange={(e) => settext(e.target.value)}  className="h-[300px]"></Textarea>

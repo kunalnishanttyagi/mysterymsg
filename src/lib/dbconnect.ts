@@ -20,7 +20,7 @@ async function dbconnect():Promise<void>{
             const mongourl=process.env.MONGO_URI;
             if(!mongourl){
                 console.log("Mongo db url not valid ");
-                process.exit(1);
+                // process.exit(1);
             }
             const db = await mongoose.connect(mongourl || '', {});
         
@@ -30,8 +30,8 @@ async function dbconnect():Promise<void>{
           } catch (error) {
             console.error('Database connection failed:', error);
         
-            process.exit(1);
+            // process.exit(1);
           }
         }
     }
-        export default dbconnect;
+export default dbconnect;

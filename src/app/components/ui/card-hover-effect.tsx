@@ -1,20 +1,26 @@
+"use client"
 import { cn } from "../../lib/util";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
-
+ interface username{
+  type:string;
+}
 export const HoverEffect = ({
   items,
   className,
+  username,
 }: {
+  username: string; 
   items: {
-    sender: string;
+    realsender: string;
     content: string;
     createdat: Date;
     _id: string;
   }[];
   className?: string;
-}) => {
+}) => { 
+
   let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
@@ -25,7 +31,7 @@ export const HoverEffect = ({
       )}
     >
       {items.map((item, idx) => (
-        <div onClick={()=>hideeverything(user.username)}
+        <Link href={`/user/sendmessage?reciever=${item.realsender}&sender=${username}`}
           // href={item?.link}
           key={item?._id}
           className="relative group  block p-2 h-full w-full"
@@ -53,7 +59,7 @@ export const HoverEffect = ({
             <CardTitle>{item.sender}</CardTitle>
             <CardDescription>{item.content}</CardDescription>
           </Card>
-        </div>
+        </Link>
       ))}
     </div>
   );

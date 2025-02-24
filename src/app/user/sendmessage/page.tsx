@@ -8,6 +8,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import shimmer from "../../../components/Backgroundhome"
 import { buttons } from '@/app/components/ui/Buttons'
 const Sendmessage = () => {
+  const token =localStorage.getItem("token");
     const toastformessagesentsuccessfully = () => toast("Msg Sent!");
           const toastformessagesentunsuccessfully = () => toast("Msg not Sent!");
     const data=useSearchParams();
@@ -25,7 +26,7 @@ const Sendmessage = () => {
           console.log("trying to make request at backend for sending message")
           const response = await fetch("http://localhost:3000/api/sendmessage", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { Authorization: `Bearer ${token}` },
             body: JSON.stringify({username:receiver,msg:text,sender:(sender),realsender:(useme)}),
           });
       
@@ -54,7 +55,7 @@ const Sendmessage = () => {
           console.log("trying to make request at backend for sending message")
           const response = await fetch("http://localhost:3000/api/sendmessage", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { Authorization: `Bearer ${token}` },
             body: JSON.stringify({username:receiver,msg:text,sender:("Anonymous"),realsender:(useme)}),
           });
       
@@ -85,7 +86,7 @@ const Sendmessage = () => {
 <div className="z-50 flex justify-center items-center h-full w-full" >
                   <div className=" mt-[200px] w-[900px] h-full bg-transparent" >
                     
-                  <Link href={`/user/${sender}`} className=" flex justify-end mb-[20px]" >{cloneElement(button.component, {}, "Show Msg")}</Link>
+                  <Link href={`/user`} className=" flex justify-end mb-[20px]" >{cloneElement(button.component, {}, "Show Msg")}</Link>
              
                     
                     <Textarea onChange={(e) => settext(e.target.value)}  className="h-[300px]"></Textarea>

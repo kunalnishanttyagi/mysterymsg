@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "../components/ui/label";
 import { Input } from "../components/ui/input";
 import { cn } from "../lib/util";
@@ -8,6 +8,8 @@ import {
   IconBrandGoogle,
   IconBrandOnlyfans,
 } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
+import BackgroundLinesDemo from "../components/welcomeuser";
 
 
 
@@ -17,25 +19,46 @@ export default function signin({ className }: { className?: string }) {
     username: "",
     password: "",
   });
+  const [user,setuser]=useState<null | {}>(null);
   const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
       setformdata({ ...formdata, [e.target.name]: e.target.value });
     };
+    const router=useRouter();
   const  handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form submitted");
+    
     try {
-      const response = await fetch("http://localhost:3000/api/signup", {
+      const response = await fetch("http://localhost:3000/api/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formdata),
       });
-      console.log(formdata);
+      // console.log(formdata);
       const data = await response.json();
-      console.log("Server Response:",data);
+      console.log("Server Response:",data.response);
+      await localStorage.setItem("token",data.response);
+      console.log("token saved in local storage",localStorage.getItem("token"));
+      if (data.success) {
+        // setuser(data.data);
+        // console.log("data for user is" data.data);
+        // setUser(data.user); // Store user data
+        router.push(`/user`); // Redirect to Dashboard
+      } else {
+        console.error("Login failed:", data.message);
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   };
+    if(user){
+      if(user.username){
+        router.replace(`/user/${user.username}`);
+      }
+    }
+  // if(user){
+    // return (<BackgroundLinesDemo data={user}></BackgroundLinesDemo>)
+  // }
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 mt-[8rem] shadow-input bg-white dark:bg-black">
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
